@@ -7,13 +7,12 @@ Layer1_Drivers::Layer1_Drivers(Layer0_Hardware& hw, Tracer& tracer)
     : hw_(hw), tracer_(tracer) {}
 
 bool Layer1_Drivers::driver_read_sector(size_t sector_id, std::array<uint8_t, DISK_BLOCK_SIZE>& buf) {
-    // TODO
-    // Read a sector through Layer 0 and trace the transition and data copy.
-
-    // YOUR CODE HERE
-    (void)sector_id;
-    (void)buf;
-    return false;
+    tracer_.record_layer_transition(1, 0, "READ_SECTOR");
+    bool ok = hw_.raw_read_block(sector_id, buf);
+    if (ok) {
+        tracer_.record_data_copy(DISK_BLOCK_SIZE, "Layer0_Disk", "Layer1_SectorBuffer");
+    }
+    return ok;
 }
 
 bool Layer1_Drivers::driver_write_sector(size_t sector_id, const std::array<uint8_t, DISK_BLOCK_SIZE>& buf) {
