@@ -55,10 +55,11 @@ int Layer3_OSApi::close(int handle) {
     return pb.status;
 
 void Layer3_OSApi::console_write(const std::string& text) {
-    // TODO
-    // Send a traced console-output request to Layer 2.
-
-    // YOUR CODE HERE
+    ParameterBlock pb;
+    pb.op = LayerOp::ConsoleWrite;
+    pb.text = text;
+    tracer_.record_layer_transition(3, 2, "CONSOLE_WRITE");
+    layer2_.process_request(pb);
     (void)text;
 }
 
