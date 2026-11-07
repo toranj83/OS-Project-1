@@ -54,13 +54,27 @@ int MonolithicKernel::handle_console_write(MonolithicKernel& kernel, const Sysca
 }
 
 int MonolithicKernel::sys_open(const std::string& path, OpenMode mode) {
-    // TODO
-    // Validate the path, apply the open mode, and allocate a file descriptor.
+    if(path.empty()) return ErrorCode::InvalidArgument;
+    if(mode != OpenMode::Read && mode != OpenMode::Write) return ErrorCode::InvalidArgument;
 
-    // YOUR CODE HERE
-    (void)path;
-    (void)mode;
-    return ErrorCode::NotFound;
+    if(mode == OpenMode::Read) {
+        if (!file_engine_.file_exists(path)) return ErrorCode::NotFound;
+    } else {
+        if(file_engine_.file_exists(path)) {
+            file_engine_.truncate_file(path);
+        } else if (!file_engine_.create_file(path)) {
+            return ErrorCode::NoSpace;
+        }
+    }
+
+    int fd = allocate_fd();
+    if (fd < 0) return ErrorCode::NoSpace;
+    KernelFileDesc& entry = fd_table_[fd];
+    entry.path = path;
+    entry.mode = mode;
+    entry.offset = 0;
+    entry.is_open = true;
+    return fd;
 }
 
 int MonolithicKernel::sys_read(int handle, uint8_t* out_buf, size_t max_bytes) {
