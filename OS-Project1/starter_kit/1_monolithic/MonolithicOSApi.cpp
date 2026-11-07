@@ -42,11 +42,9 @@ int MonolithicOSApi::close(int handle) {
 }
 
 void MonolithicOSApi::console_write(const std::string& text) {
-    // TODO
-    // Forward console output through the syscall dispatcher.
-
-    // YOUR CODE HERE
-    (void)text;
+    SyscallArgs args;
+    args.text = text;
+    kernel_.syscall(SYS_CONSOLE_WRITE, args);
 }
 
 std::string MonolithicOSApi::get_architecture_name() const {
