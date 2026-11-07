@@ -36,13 +36,14 @@ int Layer3_OSApi::read(int handle, std::vector<uint8_t>& out_buffer, size_t max_
 }
 
 int Layer3_OSApi::write(int handle, const std::vector<uint8_t>& data) {
-    // TODO
-    // Send a traced write request to Layer 2 and return its status.
-
-    // YOUR CODE HERE
-    (void)handle;
-    (void)data;
-    return ErrorCode::InvalidHandle;
+    ParameterBlock pb;
+    pb.op = LayerOp::Write;
+    pb.handle = handle;
+    pb.write_buffer = data.data();
+    pb.length = data.size();
+    tracer_.record_layer_transition(3, 2, "WRITE");
+    layer2_.process_request(pb);
+    return pb.status;
 }
 
 int Layer3_OSApi::close(int handle) {
