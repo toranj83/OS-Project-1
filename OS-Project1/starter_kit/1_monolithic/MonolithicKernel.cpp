@@ -26,10 +26,11 @@ int MonolithicKernel::syscall(int syscall_num, const SyscallArgs& args) {
 }
 
 void MonolithicKernel::setup_syscall_table() {
-    // TODO
-    // Register each syscall number with its matching kernel handler.
-
-    // YOUR CODE HERE
+    syscall_table_[SYS_OPEN] = handle_open;
+    syscall_table_[SYS_READ] = handle_read;
+    syscall_table_[SYS_WRITE] = handle_write;
+    syscall_table_[SYS_CLOSE] = handle_close;
+    syscall_table_[SYS_CONSOLE_WRITE] = handle_console_write;
 }
 
 int MonolithicKernel::handle_open(MonolithicKernel& kernel, const SyscallArgs& args) {
