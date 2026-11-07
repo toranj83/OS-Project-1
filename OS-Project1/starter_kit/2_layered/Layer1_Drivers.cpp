@@ -25,11 +25,8 @@ bool Layer1_Drivers::driver_write_sector(size_t sector_id, const std::array<uint
 }
 
 void Layer1_Drivers::driver_write_display(const std::string& text) {
-    // TODO
-    // Forward display output to Layer 0 and trace the transition.
-
-    // YOUR CODE HERE
-    (void)text;
+    tracer_.record_layer_transition(1, 0, "WRITE_DISPLAY");
+    hw_.raw_write_console(text);
 }
 
 size_t Layer1_Drivers::get_capacity_sectors() const {
