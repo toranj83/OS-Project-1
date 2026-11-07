@@ -17,8 +17,6 @@ int Layer3_OSApi::open(const std::string& path, OpenMode mode) {
 }
 
 int Layer3_OSApi::read(int handle, std::vector<uint8_t>& out_buffer, size_t max_bytes) {
-    // TODO
-    // Send a traced read request to Layer 2 and update the output buffer.
     out_buffer.resize(max_bytes);
 
     ParameterBlock pb;
