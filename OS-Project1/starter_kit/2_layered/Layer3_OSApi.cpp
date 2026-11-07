@@ -47,13 +47,12 @@ int Layer3_OSApi::write(int handle, const std::vector<uint8_t>& data) {
 }
 
 int Layer3_OSApi::close(int handle) {
-    // TODO
-    // Send a traced close request to Layer 2 and return its status.
-
-    // YOUR CODE HERE
-    (void)handle;
-    return ErrorCode::InvalidHandle;
-}
+    ParameterBlock pb;
+    pb.op = LayerOp::Close;
+    pb.handle = handle;
+    tracer_.record_layer_transition(3, 2, "CLOSE");
+    layer2_.process_request(pb);
+    return pb.status;
 
 void Layer3_OSApi::console_write(const std::string& text) {
     // TODO
