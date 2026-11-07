@@ -78,14 +78,18 @@ int MonolithicKernel::sys_open(const std::string& path, OpenMode mode) {
 }
 
 int MonolithicKernel::sys_read(int handle, uint8_t* out_buf, size_t max_bytes) {
-    // TODO
-    // Validate read access, read data, and update the offset and copy trace.
+    if(!is_valid_fd(handle)) return ErrorCode::InvalidHandle;
+    KernelFileDesc& entry = fd_table_[handle];
+    if (entry.mode == OpenMode::Write) return ErrorCode::PermissionDenied;
+    if(max_bytes == 0) return 0;
+    if (out_buf == nullptr) return ErrorCode::InvalidArgument;
 
-    // YOUR CODE HERE
-    (void)handle;
-    (void)out_buf;
-    (void)max_bytes;
-    return ErrorCode::InvalidHandle;
+    int bytes = file_engine_.read_bytes(entry.path, entry.offset, out_buf, max_bytes);
+    if (bytes > 0) {
+        entry.offset += bytes;
+        tracer_.record_data_copy(bytes, "KernelBuffer", "UserBuffer");
+    }
+    return bytes;
 }
 
 int MonolithicKernel::sys_write(int handle, const uint8_t* in_data, size_t count) {
