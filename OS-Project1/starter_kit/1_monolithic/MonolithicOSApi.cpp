@@ -28,13 +28,11 @@ int MonolithicOSApi::read(int handle, std::vector<uint8_t>& out_buffer, size_t m
 }
 
 int MonolithicOSApi::write(int handle, const std::vector<uint8_t>& data) {
-    // TODO
-    // Forward the write request through the syscall dispatcher.
-
-    // YOUR CODE HERE
-    (void)handle;
-    (void)data;
-    return ErrorCode::InvalidHandle;
+    SyscallArgs args;
+    args.handle = handle;
+    args.write_buffer = data.data();
+    args.count = data.size();
+    return kernel_.syscall(SYS_WRITE, args);
 }
 
 int MonolithicOSApi::close(int handle) {
