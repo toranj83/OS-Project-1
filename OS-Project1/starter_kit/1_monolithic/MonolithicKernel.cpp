@@ -12,17 +12,17 @@ MonolithicKernel::MonolithicKernel(VirtualDisk& disk, IVirtualConsoleDevice& con
 }
 
 int MonolithicKernel::syscall(int syscall_num, const SyscallArgs& args) {
-    // TODO
-    // Trace entry into the kernel and record call depth.
-    // TODO
-    // Dispatch the syscall and handle invalid numbers.
-    // TODO
-    // Trace the return to user space and return the result.
+    tracer_.record_domain_switch("UserSpace", "MonolithicKernel", "syscall");
+    tracer_.record_call_depth(3);
 
-    // YOUR CODE HERE
-    (void)syscall_num;
-    (void)args;
-    return ErrorCode::InvalidArgument;
+    int result = ErrorCode::InvalidArgument;
+    auto it = syscall_table_.find(syscall_num);
+    if (it != syscall_table_.end()) {
+        result = it -> second(*this, args);
+    }
+
+    tracer_.record_domain_switch("MonolithicKernel", "UserSpace", "syscall_return");
+    return result;
 }
 
 void MonolithicKernel::setup_syscall_table() {
