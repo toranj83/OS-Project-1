@@ -6,13 +6,10 @@ namespace monolithic {
 MonolithicOSApi::MonolithicOSApi(MonolithicKernel& kernel) : kernel_(kernel) {}
 
 int MonolithicOSApi::open(const std::string& path, OpenMode mode) {
-    // TODO
-    // Forward the open request through the syscall dispatcher.
-
-    // YOUR CODE HERE
-    (void)path;
-    (void)mode;
-    return ErrorCode::NotFound;
+    SyscallArgs args;
+    args.path = path;
+    args.mode = mode;
+    return kernel_.syscall(SYS_OPEN, args);
 }
 
 int MonolithicOSApi::read(int handle, std::vector<uint8_t>& out_buffer, size_t max_bytes) {
