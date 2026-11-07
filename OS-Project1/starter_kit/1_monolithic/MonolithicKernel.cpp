@@ -108,12 +108,9 @@ int MonolithicKernel::sys_write(int handle, const uint8_t* in_data, size_t count
 }
 
 int MonolithicKernel::sys_close(int handle) {
-    // TODO
-    // Validate and close the file descriptor.
-
-    // YOUR CODE HERE
-    (void)handle;
-    return ErrorCode::InvalidHandle;
+    if (!is_valid_fd(handle)) return ErrorCode::InvalidHandle;
+    fd_table_[handle].is_open = false;
+    return ErrorCode::Success;
 }
 
 int MonolithicKernel::sys_console_write(const std::string& text) {
