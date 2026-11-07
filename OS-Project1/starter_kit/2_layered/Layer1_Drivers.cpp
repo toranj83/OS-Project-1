@@ -16,13 +16,12 @@ bool Layer1_Drivers::driver_read_sector(size_t sector_id, std::array<uint8_t, DI
 }
 
 bool Layer1_Drivers::driver_write_sector(size_t sector_id, const std::array<uint8_t, DISK_BLOCK_SIZE>& buf) {
-    // TODO
-    // Write a sector through Layer 0 and trace the transition and data copy.
-
-    // YOUR CODE HERE
-    (void)sector_id;
-    (void)buf;
-    return false;
+    tracer_.record_layer_transition(1, 0, "WRITE_SECTOR");
+    bool ok = hw_.raw_write_block(sector_id, buf);
+    if (ok) {
+        tracer_.record_data_copy(DISK_BLOCK_SIZE, "Layer1_SectorBuffer", "Layer0_Disk");
+    }
+    return ok;
 }
 
 void Layer1_Drivers::driver_write_display(const std::string& text) {
