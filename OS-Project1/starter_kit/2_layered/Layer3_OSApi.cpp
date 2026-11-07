@@ -53,6 +53,7 @@ int Layer3_OSApi::close(int handle) {
     tracer_.record_layer_transition(3, 2, "CLOSE");
     layer2_.process_request(pb);
     return pb.status;
+}
 
 void Layer3_OSApi::console_write(const std::string& text) {
     ParameterBlock pb;

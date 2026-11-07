@@ -93,7 +93,7 @@ int MonolithicKernel::sys_read(int handle, uint8_t* out_buf, size_t max_bytes) {
 }
 
 int MonolithicKernel::sys_write(int handle, const uint8_t* in_data, size_t count) {
-    if(!is_valid_fd(handle)) return ErrorCode::Invalidhandle;
+    if(!is_valid_fd(handle)) return ErrorCode::InvalidHandle;
     KernelFileDesc& entry = fd_table_[handle];
     if (entry.mode == OpenMode::Read) return ErrorCode::PermissionDenied;
     if (count == 0) return 0;
